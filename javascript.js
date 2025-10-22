@@ -11,14 +11,13 @@ function Gameboard(){
         }
     }
 
-    const getBoard = () => board
-
-    const createValueMap = () => {
-        const whoa = board.map(
+    const getBoardValueMap = () => {
+        const tiled = board.map(
             (cellRow) => cellRow.map(
-                (cell) => cell.getValue()
+                (cell) => (cell.getValue())
             )
         )
+        return tiled
     }
 
     const changeTileValue = (cellRow, cellCol, tile) => {
@@ -26,17 +25,12 @@ function Gameboard(){
     }
 
     const printValueMap = () => {
-        const whoa = board.map(
-            (cellRow) => cellRow.map(
-                (cell) => console.log(cell.getValue())
-            )
-        )
+        console.log(getBoardValueMap())
     }
 
 
     return{
-        getBoard,
-        createValueMap,
+        getBoardValueMap,
         changeTileValue,
         printValueMap
     }
@@ -79,18 +73,54 @@ function Cell(){
     }
 }
 
-function controlGameFlow(){
-    //create player objects, 
-    const player1 = {
-        name: "", 
+function controlGameFlow(gameboard){
+    const player = [
+    {
+        name: "e", 
         value: 1
-    }
-    const player2 = {
+    },
+    {
         name: "",
         value: 2
+    }]
+
+    let activePlayer = player[0]
+
+    const switchTurns = () => {
+        (activePlayer == player[0]) ? activePlayer = player[1] : activePlayer = player[0]
+    }
+
+    const detectWinner = () =>{
+        const flatCellValues = gameboard.getBoardValueMap().flat()
+        const winningCombo = [
+            [0, 1, 2],
+            [0, 3, 6],
+            [0, 4, 8],
+            [1, 4, 7],
+            [2, 4, 6],
+            [2, 5, 8],
+            [3, 4, 5],
+            [6, 7, 8]
+        ]
+        let threeinRow = []
+        for (i = 0; i < player.length; i++){
+            for (j = 0; j < winningCombo.length; j++) {
+                for (k = 0; k < winningCombo[j].length; k++) {
+                    threeinRow.push(flatCellValues[winningCombo[j][k]] == player[i].value)
+                }
+                if (!threeinRow.includes(false)) {
+                    return player[i].name
+                }
+                threeinRow = []
+            }
+        }
+        return "N/A"
     }
 
 
+    return{
+        detectWinner
+    }
 }
 
 function controlDisplay(){
@@ -98,5 +128,12 @@ function controlDisplay(){
 }
 
 const thing = Gameboard()
-thing.changeTileValue(0, 2, 2)
+const other = controlGameFlow(thing)
+
 thing.printValueMap()
+other.detectWinner()
+thing.changeTileValue(0, 0, 1)
+thing.changeTileValue(1, 1, 1)
+thing.changeTileValue(2, 2, 1)
+thing.printValueMap()
+console.log(other.detectWinner())
