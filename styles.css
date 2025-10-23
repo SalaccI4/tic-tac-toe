@@ -25,7 +25,7 @@ button{
     margin: 1rem;
 }
 
-.top{
+.top, .cell{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -52,4 +52,8 @@ button{
     width: 100px;
     height: 100px;
     box-shadow: 0px 0px 7px 0px;
+}
+
+.cell{
+    font-size: 5rem;
 }

@@ -59,8 +59,7 @@ function Cell(){
     }
 }
 
-function UserInterface(){
-    const gameboard = Gameboard()
+function UserInterface(gameboard){
     const container = document.querySelector(".container")
     const start = document.querySelector("#start")
     const restart = document.querySelector("#restart")
@@ -84,7 +83,7 @@ function UserInterface(){
 
             if (e.target.classList.contains("cell")) {
                 if (e.target.textContent == ""){
-                    e.target.textContent = type
+                    e.target.textContent = (type == 1) ? "X" : "O"
                     gameboard.changeTileValue(cellRow, cellCol, type)
                     callback()
                 }
@@ -125,7 +124,7 @@ function controlGameFlow(){
     }]
 
     const gameboard = Gameboard()
-    const user = UserInterface()
+    const user = UserInterface(gameboard)
 
     let activePlayer = player[0]
 
@@ -166,13 +165,17 @@ function controlGameFlow(){
     }
     
     user.implementCells()
-    // startbutton
-
     user.fillTile(() => activePlayer.value, () => {
-        switchTurns()
-        console.log(activePlayer.value)
-        console.log("Switched to player", activePlayer.name)
+        if (detectWinner() === "N/A"){
+            switchTurns()
+            console.log("poo" + detectWinner())
+        }
+        else{
+            console.log("whoa" + detectWinner())
+        }
     })
+    
+    
 
     return{
         switchTurns,
