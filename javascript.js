@@ -11,6 +11,9 @@ function Gameboard(){
         }
     }
 
+    const getRow = () => row
+    const getCol = () => col
+
     const getBoardValueMap = () => {
         const tiled = board.map(
             (cellRow) => cellRow.map(
@@ -28,40 +31,22 @@ function Gameboard(){
         console.log(getBoardValueMap())
     }
 
-
-    return{
-        getBoardValueMap,
-        changeTileValue,
-        printValueMap
+    const resetBoard = () => {
+        for (i = 0; i < row; i++) {
+            for (j = 0; j < col; j++) {
+                changeTileValue(i, j, 0)
+            }
+        }
     }
 
-    // const container = document.querySelector(".container")
-
-    // container.addEventListener("click", (e) => {
-    //     console.log(e.target.classList)
-    //     if (e.target.classList.contains("cell")) {
-    //         e.target.style.backgroundColor = "red";
-    //         console.log()
-    //     }
-    // })
-    
-    // let board = []
-    // const row = 3
-    // const col = 3
-
-    // const implementCell = (rowNum, colNum) => {
-    //     let cell = document.createElement("div")
-    //     cell.classList.add("cell", `r${rowNum}`, `c${colNum}`)
-    //     container.append(cell)
-    // }
-
-    // for (i = 0; i < row; i++){
-    //     board[i] = []
-    //     for (j = 0; j < col; j++) {
-    //         implementCell(i, j)
-    //     }
-    // }
-    // console.log(board)
+    return{
+        getRow,
+        getCol,
+        getBoardValueMap,
+        changeTileValue,
+        printValueMap,
+        resetBoard
+    }
 }
 
 function Cell(){
@@ -69,14 +54,60 @@ function Cell(){
     const changeValue = (changed) => value = changed
     const getValue = () => value
     return{
-        getValue, changeValue
+        getValue, 
+        changeValue
+    }
+}
+
+function UserInterface(gameboard){
+    const container = document.querySelector(".container")
+    const start = document.querySelector("#start")
+    const restart = document.querySelector("#restart")
+
+
+    const implementCells = () => {
+        for (i = 0; i < gameboard.getRow(); i++) {
+            for (j = 0; j < gameboard.getCol(); j++) {
+                let cell = document.createElement("div")
+                container.append(cell)
+                cell.classList.add("cell", `r${i}`, `c${j}`)
+            }
+        }
+    }
+
+    const fillTile = (type) => {
+        container.addEventListener("click", (e) => {
+            console.log(e.target.classList)
+            if (e.target.classList.contains("cell")) {
+                if (e.target.textContent !== ""){
+                    e.target.textContent = type
+                }
+            }
+        })
+    }
+
+    const startButton = () => {
+        start.addEventListener("click", () => 
+            console.log("Quack"))      
+    }
+
+    const restartButton = () => {
+        restart.addEventListener("click", () =>
+            console.log("Quock"))
+    }
+
+    return{
+        implementCells,
+        fillTile,
+        startButton,
+        restartButton
     }
 }
 
 function controlGameFlow(gameboard){
     const player = [
     {
-        name: "e", 
+        name: "", 
         value: 1
     },
     {
@@ -117,23 +148,26 @@ function controlGameFlow(gameboard){
         return "N/A"
     }
 
-
     return{
-        detectWinner
+        switchTurns,
+        detectWinner,
     }
-}
-
-function controlDisplay(){
-    
 }
 
 const thing = Gameboard()
 const other = controlGameFlow(thing)
+const dis = UserInterface(thing)
+
+dis.implementCells()
 
 thing.printValueMap()
-other.detectWinner()
 thing.changeTileValue(0, 0, 1)
 thing.changeTileValue(1, 1, 1)
 thing.changeTileValue(2, 2, 1)
 thing.printValueMap()
 console.log(other.detectWinner())
+thing.resetBoard()
+thing.printValueMap()
+
+dis.startButton()
+dis.restartButton()
