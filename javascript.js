@@ -59,7 +59,8 @@ function Cell(){
     }
 }
 
-function UserInterface(gameboard){
+function UserInterface(){
+    const gameboard = Gameboard()
     const container = document.querySelector(".container")
     const start = document.querySelector("#start")
     const restart = document.querySelector("#restart")
@@ -75,9 +76,9 @@ function UserInterface(gameboard){
         }
     }
 
-    const fillTile = (type) => {
+    const fillTile = (getType, callback) => {
         container.addEventListener("click", (e) => {
-
+            const type = getType()
             const cellRow = e.target.classList[1].substring(1, 2)
             const cellCol = e.target.classList[2].substring(1, 2)
 
@@ -85,6 +86,10 @@ function UserInterface(gameboard){
                 if (e.target.textContent == ""){
                     e.target.textContent = type
                     gameboard.changeTileValue(cellRow, cellCol, type)
+                    callback()
+                }
+                else{
+                    console.log("Pick Another Tile!")
                 }
             }
         })
@@ -108,21 +113,24 @@ function UserInterface(gameboard){
     }
 }
 
-function controlGameFlow(gameboard){
+function controlGameFlow(){
     const player = [
     {
-        name: "", 
+        name: "john", 
         value: 1
     },
     {
-        name: "",
+        name: "Dpe",
         value: 2
     }]
+
+    const gameboard = Gameboard()
+    const user = UserInterface()
 
     let activePlayer = player[0]
 
     const switchTurns = () => {
-        (activePlayer == player[0]) ? activePlayer = player[1] : activePlayer = player[0]
+        activePlayer = (activePlayer == player[0]) ? player[1] : player[0]
     }
 
     const detectWinner = () =>{
@@ -156,8 +164,15 @@ function controlGameFlow(gameboard){
 
         return "N/A"
     }
-
     
+    user.implementCells()
+    // startbutton
+
+    user.fillTile(() => activePlayer.value, () => {
+        switchTurns()
+        console.log(activePlayer.value)
+        console.log("Switched to player", activePlayer.name)
+    })
 
     return{
         switchTurns,
@@ -165,21 +180,4 @@ function controlGameFlow(gameboard){
     }
 }
 
-const thing = Gameboard()
-const other = controlGameFlow(thing)
-const dis = UserInterface(thing)
-
-dis.implementCells()
-
-thing.printValueMap()
-thing.changeTileValue(0, 0, 1)
-thing.changeTileValue(1, 1, 1)
-thing.changeTileValue(2, 2, 1)
-thing.printValueMap()
-console.log(other.detectWinner())
-thing.resetBoard()
-thing.printValueMap()
-
-dis.startButton()
-dis.restartButton()
-dis.fillTile(2)
+const other = controlGameFlow()
