@@ -156,12 +156,12 @@ function controlGameFlow(){
                 threeinRow = []
             }
         }
-
-        if (flatCellValues.filter((value) => value == 0) == []){
+        if (flatCellValues.filter((value) => value == 0).length == 0){
             return "It's a Draw!"
         }
-
-        return "N/A"
+        else{
+            return "N/A"
+        }
     }
     
     user.implementCells()
