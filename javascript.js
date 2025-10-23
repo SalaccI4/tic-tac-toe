@@ -77,10 +77,14 @@ function UserInterface(gameboard){
 
     const fillTile = (type) => {
         container.addEventListener("click", (e) => {
-            console.log(e.target.classList)
+
+            const cellRow = e.target.classList[1].substring(1, 2)
+            const cellCol = e.target.classList[2].substring(1, 2)
+
             if (e.target.classList.contains("cell")) {
-                if (e.target.textContent !== ""){
+                if (e.target.textContent == ""){
                     e.target.textContent = type
+                    gameboard.changeTileValue(cellRow, cellCol, type)
                 }
             }
         })
@@ -140,13 +144,20 @@ function controlGameFlow(gameboard){
                     threeinRow.push(flatCellValues[winningCombo[j][k]] == player[i].value)
                 }
                 if (!threeinRow.includes(false)) {
-                    return player[i].name
+                    return player[i].name + " Wins!"
                 }
                 threeinRow = []
             }
         }
+
+        if (flatCellValues.filter((value) => value == 0) == []){
+            return "It's a Draw!"
+        }
+
         return "N/A"
     }
+
+    
 
     return{
         switchTurns,
@@ -171,3 +182,4 @@ thing.printValueMap()
 
 dis.startButton()
 dis.restartButton()
+dis.fillTile(2)
