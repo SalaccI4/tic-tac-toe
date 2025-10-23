@@ -14,6 +14,8 @@ function Gameboard(){
     const getRow = () => row
     const getCol = () => col
 
+    const getBoard = () => board
+
     const getBoardValueMap = () => {
         const tiled = board.map(
             (cellRow) => cellRow.map(
@@ -31,7 +33,7 @@ function Gameboard(){
         console.log(getBoardValueMap())
     }
 
-    const resetBoard = () => {
+    const resetBoardValue = () => {
         for (i = 0; i < row; i++) {
             for (j = 0; j < col; j++) {
                 changeTileValue(i, j, 0)
@@ -42,10 +44,11 @@ function Gameboard(){
     return{
         getRow,
         getCol,
+        getBoard,
         getBoardValueMap,
         changeTileValue,
         printValueMap,
-        resetBoard
+        resetBoardValue
     }
 }
 
@@ -85,6 +88,7 @@ function UserInterface(gameboard){
                 if (e.target.textContent == ""){
                     e.target.textContent = (type == 1) ? "X" : "O"
                     gameboard.changeTileValue(cellRow, cellCol, type)
+                    console.log(e.target.textContent)
                     callback()
                 }
                 else{
@@ -92,6 +96,14 @@ function UserInterface(gameboard){
                 }
             }
         })
+    }
+
+    const eraseBoard = () => {
+        const cells = document.querySelectorAll(".cell")
+        cells.forEach((cell) => {
+            cell.textContent = ""
+        })
+        gameboard.resetBoardValue()
     }
 
     const startButton = () => {
@@ -107,6 +119,7 @@ function UserInterface(gameboard){
     return{
         implementCells,
         fillTile,
+        eraseBoard,
         startButton,
         restartButton
     }
@@ -172,11 +185,10 @@ function controlGameFlow(){
         }
         else{
             console.log("whoa" + detectWinner())
+            user.eraseBoard()
         }
     })
     
-    
-
     return{
         switchTurns,
         detectWinner,
