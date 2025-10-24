@@ -135,15 +135,23 @@ function UserInterface(gameboard){
             console.log("Quock"))
     }
 
-    const getNames = () => {
-        input1.addEventListener("keydown", (e) => {
-            if (e.key == "Enter"){
-                display1.textContent = input1.value
+    const getNames = (player) => {
+        return new Promise((resolve) => {
+            if (player == 1) {
+                input1.addEventListener("keydown", (e) => {
+                    if (e.key == "Enter") {
+                        display1.textContent = input1.value
+                        resolve(input1.value)
+                    }
+                })
             }
-        })
-        input2.addEventListener("keydown", (e) => {
-            if (e.key == "Enter") {
-                display2.textContent = input2.value
+            else if (player == 2) {
+                input2.addEventListener("keydown", (e) => {
+                    if (e.key == "Enter") {
+                        display2.textContent = input2.value
+                        resolve(input2.value)
+                    }
+                })
             }
         })
     }
@@ -162,11 +170,11 @@ function UserInterface(gameboard){
 function controlGameFlow(){
     const player = [
     {
-        name: "john", 
+        name: "", 
         value: 1
     },
     {
-        name: "Dpe",
+        name: "",
         value: 2
     }]
 
@@ -214,7 +222,9 @@ function controlGameFlow(){
     
     async function runShit() {
         user.implementCells()
-        user.getNames()
+        player[0].name = await user.getNames(player[0].value)
+        player[1].name = await user.getNames(player[1].value)
+        
         // await user.startButton()
 
         while (true) {
