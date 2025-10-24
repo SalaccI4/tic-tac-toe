@@ -84,26 +84,27 @@ function UserInterface(gameboard){
     }
 
     const fillTile = (getType) => {
-        return new Promise((resolve => {
-            container.addEventListener("click", (e) => {
-                const type = getType()
+        return new Promise((resolve) => {
+            const handleClick = (e) => {
                 const cellRow = e.target.classList[1].substring(1, 2)
                 const cellCol = e.target.classList[2].substring(1, 2)
 
                 if (e.target.classList.contains("cell")) {
-                    if (e.target.textContent == "") {
-                        e.target.textContent = (type == 1) ? "X" : "O"
-                        gameboard.changeTileValue(cellRow, cellCol, type)
-                        console.log(e.target.textContent)
+                    if (e.target.textContent === "") {
+                        e.target.textContent = (getType == 1) ? "X" : "O"
+                        gameboard.changeTileValue(cellRow, cellCol, getType)
+                        container.removeEventListener("click", handleClick)
                         resolve()
-                    }
-                    else {
-                        console.log("Pick Another Tile!")
+                    } else {
+                        console.log("Pick Another Tile!");
                     }
                 }
-            })
-        }))
-    }
+
+            };
+
+            container.addEventListener("click", handleClick);
+        });
+    };
 
     const eraseBoard = () => {
         const cells = document.querySelectorAll(".cell")
@@ -172,6 +173,7 @@ function controlGameFlow(){
     const user = UserInterface(gameboard)
 
     let activePlayer = player[0]
+    const getActivePlayerValue = () => activePlayer.value
 
     const switchTurns = () => {
         activePlayer = (activePlayer == player[0]) ? player[1] : player[0]
@@ -209,20 +211,24 @@ function controlGameFlow(){
         }
     }
     
-    async function runShit(){
+    async function runShit() {
         user.implementCells()
         user.getNames()
-        await user.startButton()
-        user.fillTile(() => activePlayer.value, () => {
-            if (detectWinner() === "N/A") {
-                switchTurns()
-                console.log("poo" + detectWinner())
+        // await user.startButton()
+
+        while (true) {
+            await user.fillTile(getActivePlayerValue())
+            console.log(getActivePlayerValue())
+            const result = detectWinner()
+            if (result !== "N/A") {
+                console.log(result)
+                break
             }
-            else {
-                console.log("whoa" + detectWinner())
-            }
-        })
+
+            switchTurns()
+        }
     }
+
 
     runShit()
     
