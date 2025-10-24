@@ -73,6 +73,8 @@ function UserInterface(gameboard){
     const display2 = document.querySelector("#p2text")
     const bottomDisplay = document.querySelector("#display")
 
+    const updateDisplayText = (text) => bottomDisplay.textContent = text
+
     const implementCells = () => {
         for (i = 0; i < gameboard.getRow(); i++) {
             for (j = 0; j < gameboard.getCol(); j++) {
@@ -96,7 +98,7 @@ function UserInterface(gameboard){
                         container.removeEventListener("click", handleClick)
                         resolve()
                     } else {
-                        console.log("Pick Another Tile!");
+                        updateDisplayText("Choose Another Tile!")
                     }
                 }
 
@@ -128,8 +130,6 @@ function UserInterface(gameboard){
         })
     }
 
-
-
     const restartButton = () => {
         restart.addEventListener("click", () =>
             console.log("Quock"))
@@ -150,6 +150,7 @@ function UserInterface(gameboard){
 
     return{
         implementCells,
+        updateDisplayText,
         fillTile,
         eraseBoard,
         startButton,
@@ -217,16 +218,15 @@ function controlGameFlow(){
         // await user.startButton()
 
         while (true) {
+            user.updateDisplayText(`${activePlayer.name}'s Turn`)
             await user.fillTile(getActivePlayerValue())
-            console.log(getActivePlayerValue())
-            const result = detectWinner()
-            if (result !== "N/A") {
-                console.log(result)
+            if (detectWinner() !== "N/A") {
                 break
             }
-
             switchTurns()
         }
+        user.updateDisplayText(`${activePlayer.name} is the winner!`)
+
     }
 
 
