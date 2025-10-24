@@ -134,8 +134,13 @@ function UserInterface(gameboard){
     }
 
     const restartButton = () => {
-        restart.addEventListener("click", () =>
-            console.log("Quock"))
+        return new Promise((resolve) => {
+            restart.addEventListener("click", () =>{
+                eraseBoard()
+                console.log("RE")
+                resolve(false)
+            })
+        })
     }
 
     const getNames = (player) => {
@@ -226,12 +231,7 @@ function controlGameFlow(){
         }
     }
     
-    async function runShit() {
-        user.implementCells()
-        // player[0].name = await user.getNames(player[0].index)
-        // player[1].name = await user.getNames(player[1].index)
-        // await user.startButton()
-
+    async function playRound(){
         while (true) {
             user.updateDisplayText(`${activePlayer.name}'s Turn`)
             await user.fillTile(getActivePlayerValue())
@@ -241,17 +241,29 @@ function controlGameFlow(){
                 user.updateScoreText(activePlayer.value, activePlayer.score)
                 break
             }
-            else if (detectWinner() == "Draw"){
+            else if (detectWinner() == "Draw") {
                 user.updateDisplayText("It's a Draw!")
                 break
             }
             switchTurns()
         }
-
     }
 
+    async function runGame() {
+        user.implementCells()
+        player[0].name = await user.getNames(0)
+        player[1].name = await user.getNames(1)
+        await user.startButton()
 
-    runShit()
+        playRound()
+        while (!await user.restartButton()) {
+            playRound()
+            activePlayer = player[0]
+        }
+    }
+
+    
+    runGame()
     
     return{
         switchTurns,
