@@ -71,6 +71,7 @@ function UserInterface(gameboard){
     const input2 = document.querySelector("#p2name")
     const display1 = document.querySelector("#p1text")
     const display2 = document.querySelector("#p2text")
+    const bottomDisplay = document.querySelector("#display")
 
     const implementCells = () => {
         for (i = 0; i < gameboard.getRow(); i++) {
@@ -111,12 +112,17 @@ function UserInterface(gameboard){
     }
 
     const startButton = () => {
-        start.addEventListener("click", () => {
-            if(display1 !== "[P1]" && display2 !== "[P2]"){
-                return true
+        const handleClick = () => {
+            if (display1.textContent !== "[P1]" && display2.textContent !== "[P2]") {
+                start.removeEventListener("click", handleClick)
+            } else {
+                bottomDisplay.textContent = "Please Enter Your Names!"
             }
-        })      
+        }
+        start.addEventListener("click", handleClick)
     }
+
+
 
     const restartButton = () => {
         restart.addEventListener("click", () =>
@@ -200,6 +206,7 @@ function controlGameFlow(){
     
     user.implementCells()
     user.getNames()
+    user.startButton()
     user.fillTile(() => activePlayer.value, () => {
         if (detectWinner() === "N/A"){
             switchTurns()
@@ -210,8 +217,6 @@ function controlGameFlow(){
         }
     })
     
-
-
     return{
         switchTurns,
         detectWinner,
