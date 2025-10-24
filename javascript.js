@@ -83,24 +83,26 @@ function UserInterface(gameboard){
         }
     }
 
-    const fillTile = (getType, callback) => {
-        container.addEventListener("click", (e) => {
-            const type = getType()
-            const cellRow = e.target.classList[1].substring(1, 2)
-            const cellCol = e.target.classList[2].substring(1, 2)
+    const fillTile = (getType) => {
+        return new Promise((resolve => {
+            container.addEventListener("click", (e) => {
+                const type = getType()
+                const cellRow = e.target.classList[1].substring(1, 2)
+                const cellCol = e.target.classList[2].substring(1, 2)
 
-            if (e.target.classList.contains("cell")) {
-                if (e.target.textContent == ""){
-                    e.target.textContent = (type == 1) ? "X" : "O"
-                    gameboard.changeTileValue(cellRow, cellCol, type)
-                    console.log(e.target.textContent)
-                    callback()
+                if (e.target.classList.contains("cell")) {
+                    if (e.target.textContent == "") {
+                        e.target.textContent = (type == 1) ? "X" : "O"
+                        gameboard.changeTileValue(cellRow, cellCol, type)
+                        console.log(e.target.textContent)
+                        resolve()
+                    }
+                    else {
+                        console.log("Pick Another Tile!")
+                    }
                 }
-                else{
-                    console.log("Pick Another Tile!")
-                }
-            }
-        })
+            })
+        }))
     }
 
     const eraseBoard = () => {
@@ -112,14 +114,17 @@ function UserInterface(gameboard){
     }
 
     const startButton = () => {
-        const handleClick = () => {
-            if (display1.textContent !== "[P1]" && display2.textContent !== "[P2]") {
-                start.removeEventListener("click", handleClick)
-            } else {
-                bottomDisplay.textContent = "Please Enter Your Names!"
+        return new Promise((resolve) => {
+            const handleClick = () => {
+                if (display1.textContent !== "[P1]" && display2.textContent !== "[P2]") {
+                    start.removeEventListener("click", handleClick)
+                    resolve()
+                } else {
+                    bottomDisplay.textContent = "Please Enter Your Names!"
+                }
             }
-        }
-        start.addEventListener("click", handleClick)
+            start.addEventListener("click", handleClick)
+        })
     }
 
 
@@ -204,18 +209,22 @@ function controlGameFlow(){
         }
     }
     
-    user.implementCells()
-    user.getNames()
-    user.startButton()
-    user.fillTile(() => activePlayer.value, () => {
-        if (detectWinner() === "N/A"){
-            switchTurns()
-            console.log("poo" + detectWinner())
-        }
-        else{
-            console.log("whoa" + detectWinner())
-        }
-    })
+    async function runShit(){
+        user.implementCells()
+        user.getNames()
+        await user.startButton()
+        user.fillTile(() => activePlayer.value, () => {
+            if (detectWinner() === "N/A") {
+                switchTurns()
+                console.log("poo" + detectWinner())
+            }
+            else {
+                console.log("whoa" + detectWinner())
+            }
+        })
+    }
+
+    runShit()
     
     return{
         switchTurns,
