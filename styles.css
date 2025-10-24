@@ -6,6 +6,7 @@
 :root{
     --button-bg: blue;
     --pure-white: white;
+    --input-color: gray;
 }
 
 body{
@@ -70,5 +71,5 @@ input{
     height: 3rem;
     border-radius: 1rem;
     font-size: 1.5rem;
-    color: rgb(74, 65, 65);
+    color: var(--input-color);
 }

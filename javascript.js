@@ -67,6 +67,10 @@ function UserInterface(gameboard){
     const start = document.querySelector("#start")
     const restart = document.querySelector("#restart")
 
+    const input1 = document.querySelector("#p1name")
+    const input2 = document.querySelector("#p2name")
+    const display1 = document.querySelector("#p1text")
+    const display2 = document.querySelector("#p2text")
 
     const implementCells = () => {
         for (i = 0; i < gameboard.getRow(); i++) {
@@ -107,8 +111,11 @@ function UserInterface(gameboard){
     }
 
     const startButton = () => {
-        start.addEventListener("click", () => 
-            console.log("Quack"))      
+        start.addEventListener("click", () => {
+            if(display1 !== "[P1]" && display2 !== "[P2]"){
+                return true
+            }
+        })      
     }
 
     const restartButton = () => {
@@ -116,12 +123,26 @@ function UserInterface(gameboard){
             console.log("Quock"))
     }
 
+    const getNames = () => {
+        input1.addEventListener("keydown", (e) => {
+            if (e.key == "Enter"){
+                display1.textContent = input1.value
+            }
+        })
+        input2.addEventListener("keydown", (e) => {
+            if (e.key == "Enter") {
+                display2.textContent = input2.value
+            }
+        })
+    }
+
     return{
         implementCells,
         fillTile,
         eraseBoard,
         startButton,
-        restartButton
+        restartButton,
+        getNames
     }
 }
 
@@ -178,6 +199,7 @@ function controlGameFlow(){
     }
     
     user.implementCells()
+    user.getNames()
     user.fillTile(() => activePlayer.value, () => {
         if (detectWinner() === "N/A"){
             switchTurns()
@@ -185,10 +207,11 @@ function controlGameFlow(){
         }
         else{
             console.log("whoa" + detectWinner())
-            user.eraseBoard()
         }
     })
     
+
+
     return{
         switchTurns,
         detectWinner,
