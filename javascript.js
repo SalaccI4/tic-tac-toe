@@ -71,9 +71,15 @@ function UserInterface(gameboard){
     const input2 = document.querySelector("#p2name")
     const display1 = document.querySelector("#p1text")
     const display2 = document.querySelector("#p2text")
+    const score1 = document.querySelector("#p1score")
+    const score2 = document.querySelector("#p2score")
     const bottomDisplay = document.querySelector("#display")
 
     const updateDisplayText = (text) => bottomDisplay.textContent = text
+    const updateScoreText = (player, scoreNum) => {
+        if (player == 1) score1.textContent = `Score: ${scoreNum}`
+        else if (player == 2) score2.textContent = `Score: ${scoreNum}`
+    }
 
     const implementCells = () => {
         for (i = 0; i < gameboard.getRow(); i++) {
@@ -134,7 +140,7 @@ function UserInterface(gameboard){
 
     const getNames = (player) => {
         return new Promise((resolve) => {
-            if (player == 1) {
+            if (player == 0) {
                 input1.addEventListener("keydown", (e) => {
                     if (e.key == "Enter") {
                         display1.textContent = input1.value
@@ -142,7 +148,7 @@ function UserInterface(gameboard){
                     }
                 })
             }
-            else if (player == 2) {
+            else if (player == 1) {
                 input2.addEventListener("keydown", (e) => {
                     if (e.key == "Enter") {
                         display2.textContent = input2.value
@@ -156,6 +162,7 @@ function UserInterface(gameboard){
     return{
         implementCells,
         updateDisplayText,
+        updateScoreText,
         fillTile,
         eraseBoard,
         startButton,
@@ -168,11 +175,13 @@ function controlGameFlow(){
     const player = [
     {
         name: "", 
-        value: 1
+        value: 1,
+        score: 0
     },
     {
         name: "",
-        value: 2
+        value: 2,
+        score: 0
     }]
 
     const gameboard = Gameboard()
@@ -219,15 +228,17 @@ function controlGameFlow(){
     
     async function runShit() {
         user.implementCells()
-        player[0].name = await user.getNames(player[0].value)
-        player[1].name = await user.getNames(player[1].value)
-        await user.startButton()
+        // player[0].name = await user.getNames(player[0].index)
+        // player[1].name = await user.getNames(player[1].index)
+        // await user.startButton()
 
         while (true) {
             user.updateDisplayText(`${activePlayer.name}'s Turn`)
             await user.fillTile(getActivePlayerValue())
             if (detectWinner() == "Win") {
+                activePlayer.score++
                 user.updateDisplayText(`${activePlayer.name} is the winner!`)
+                user.updateScoreText(activePlayer.value, activePlayer.score)
                 break
             }
             else if (detectWinner() == "Draw"){
