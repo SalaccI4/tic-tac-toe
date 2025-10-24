@@ -204,13 +204,13 @@ function controlGameFlow(){
                     threeinRow.push(flatCellValues[winningCombo[j][k]] == player[i].value)
                 }
                 if (!threeinRow.includes(false)) {
-                    return player[i].name + " Wins!"
+                    return "Win"
                 }
                 threeinRow = []
             }
         }
         if (flatCellValues.filter((value) => value == 0).length == 0){
-            return "It's a Draw!"
+            return "Draw"
         }
         else{
             return "N/A"
@@ -226,12 +226,16 @@ function controlGameFlow(){
         while (true) {
             user.updateDisplayText(`${activePlayer.name}'s Turn`)
             await user.fillTile(getActivePlayerValue())
-            if (detectWinner() !== "N/A") {
+            if (detectWinner() == "Win") {
+                user.updateDisplayText(`${activePlayer.name} is the winner!`)
+                break
+            }
+            else if (detectWinner() == "Draw"){
+                user.updateDisplayText("It's a Draw!")
                 break
             }
             switchTurns()
         }
-        user.updateDisplayText(`${activePlayer.name} is the winner!`)
 
     }
 
