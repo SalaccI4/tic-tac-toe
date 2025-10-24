@@ -119,12 +119,9 @@ function UserInterface(gameboard){
     const startButton = () => {
         return new Promise((resolve) => {
             const handleClick = () => {
-                if (display1.textContent !== "[P1]" && display2.textContent !== "[P2]") {
-                    start.removeEventListener("click", handleClick)
-                    resolve()
-                } else {
-                    bottomDisplay.textContent = "Please Enter Your Names!"
-                }
+                start.removeEventListener("click", handleClick)
+                resolve()
+                
             }
             start.addEventListener("click", handleClick)
         })
@@ -224,8 +221,7 @@ function controlGameFlow(){
         user.implementCells()
         player[0].name = await user.getNames(player[0].value)
         player[1].name = await user.getNames(player[1].value)
-        
-        // await user.startButton()
+        await user.startButton()
 
         while (true) {
             user.updateDisplayText(`${activePlayer.name}'s Turn`)
