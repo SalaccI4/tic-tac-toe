@@ -64,3 +64,11 @@ button{
     word-wrap: break-word;
     text-align: center;
 }
+
+input{
+    width: 15rem;
+    height: 3rem;
+    border-radius: 1rem;
+    font-size: 1.5rem;
+    color: rgb(74, 65, 65);
+}
