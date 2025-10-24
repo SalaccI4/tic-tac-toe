@@ -25,7 +25,7 @@ button{
     margin: 1rem;
 }
 
-.top, .cell{
+.btn, .cell{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -39,7 +39,7 @@ button{
     justify-items: stretch;
 }
 
-.stats{
+.stats, #display{
     font-size: 2rem;
 }
 
@@ -56,4 +56,11 @@ button{
 
 .cell{
     font-size: 5rem;
+}
+
+#display{
+    margin: 0 auto;
+    max-width: 100%;
+    word-wrap: break-word;
+    text-align: center;
 }
