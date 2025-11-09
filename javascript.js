@@ -98,6 +98,7 @@ function UserInterface(gameboard){
                 const cellCol = e.target.classList[2].substring(1, 2)
 
                 if (e.target.classList.contains("cell")) {
+                    console.log("CELL")
                     if (e.target.textContent === "") {
                         e.target.textContent = (getType == 1) ? "X" : "O"
                         gameboard.changeTileValue(cellRow, cellCol, getType)
@@ -146,19 +147,15 @@ function UserInterface(gameboard){
     const getNames = (player) => {
         return new Promise((resolve) => {
             if (player == 0) {
-                input1.addEventListener("keydown", (e) => {
-                    if (e.key == "Enter") {
-                        display1.textContent = input1.value
-                        resolve(input1.value)
-                    }
+                input1.addEventListener("keyup", (e) => {
+                    display1.textContent = input1.value
+                    resolve(input1.value)
                 })
             }
             else if (player == 1) {
-                input2.addEventListener("keydown", (e) => {
-                    if (e.key == "Enter") {
-                        display2.textContent = input2.value
-                        resolve(input2.value)
-                    }
+                input2.addEventListener("keyup", (e) => {
+                    display2.textContent = input2.value
+                    resolve(input2.value)
                 })
             }
         })
@@ -256,8 +253,9 @@ function controlGameFlow(){
         await user.startButton()
 
         playRound()
-        while (!await user.restartButton()) {
+        if (!await user.restartButton()) {
             playRound()
+            gameboard.printValueMap()
             activePlayer = player[0]
         }
     }
@@ -271,4 +269,4 @@ function controlGameFlow(){
     }
 }
 
-const other = controlGameFlow()
+const play = controlGameFlow()
