@@ -64,8 +64,7 @@ function Cell(){
 
 function UserInterface(gameboard){
     const container = document.querySelector(".container")
-    const start = document.querySelector("#start")
-    const restart = document.querySelector("#restart")
+    const newgame = document.querySelector("#newgame")
 
     const input1 = document.querySelector("#p1name")
     const input2 = document.querySelector("#p2name")
@@ -98,7 +97,6 @@ function UserInterface(gameboard){
                 const cellCol = e.target.classList[2].substring(1, 2)
 
                 if (e.target.classList.contains("cell")) {
-                    console.log("CELL")
                     if (e.target.textContent === "") {
                         e.target.textContent = (getType == 1) ? "X" : "O"
                         gameboard.changeTileValue(cellRow, cellCol, getType)
@@ -126,39 +124,38 @@ function UserInterface(gameboard){
     const startButton = () => {
         return new Promise((resolve) => {
             const handleClick = () => {
-                start.removeEventListener("click", handleClick)
+                newgame.removeEventListener("click", handleClick)
                 resolve()
                 
             }
-            start.addEventListener("click", handleClick)
+            newgame.addEventListener("click", handleClick)
         })
     }
 
-    const restartButton = () => {
-        return new Promise((resolve) => {
-            restart.addEventListener("click", () =>{
-                eraseBoard()
-                console.log("RE")
-                resolve(false)
-            })
-        })
-    }
-
-    const getNames = (player) => {
+    const changeNames = (player) => {
         return new Promise((resolve) => {
             if (player == 0) {
-                input1.addEventListener("keyup", (e) => {
+                input1.addEventListener("keyup", () => {
                     display1.textContent = input1.value
-                    resolve(input1.value)
+                    resolve()
                 })
             }
             else if (player == 1) {
-                input2.addEventListener("keyup", (e) => {
+                input2.addEventListener("keyup", () => {
                     display2.textContent = input2.value
-                    resolve(input2.value)
+                    resolve()
                 })
             }
         })
+    }
+
+    const getPlayerNames = (player) => {
+        if (player == 0) {
+            return display1.textContent
+        }
+        else if (player == 1) {
+            return display2.textContent
+        }
     }
 
     return{
@@ -168,8 +165,8 @@ function UserInterface(gameboard){
         fillTile,
         eraseBoard,
         startButton,
-        restartButton,
-        getNames
+        changeNames,
+        getPlayerNames
     }
 }
 
@@ -248,12 +245,14 @@ function controlGameFlow(){
 
     async function runGame() {
         user.implementCells()
-        player[0].name = await user.getNames(0)
-        player[1].name = await user.getNames(1)
+        await user.changeNames(0)
+        await user.changeNames(1)
         await user.startButton()
+        player[0].name = user.getPlayerNames(0)
+        player[1].name = user.getPlayerNames(1)
 
         playRound()
-        if (!await user.restartButton()) {
+        if (!await user.startButton()) {
             playRound()
             gameboard.printValueMap()
             activePlayer = player[0]
