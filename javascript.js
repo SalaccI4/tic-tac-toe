@@ -126,7 +126,7 @@ const controller = (() => {
                 return true
             }
             //if all tiles are occupied and there isn't 3 in a row
-            else if (!gameboard.getBoard().includes("") && !threeInRow.includes(false)){
+            else if (!gameboard.getBoard().includes("") && threeInRow.includes(false)){
                 return false
             }
         }
