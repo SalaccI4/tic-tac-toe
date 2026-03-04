@@ -1,200 +1,107 @@
-function Gameboard(){
-
-    let board = []
-    const row = 3
-    const col = 3
-
-    for (i = 0; i < row; i++){
-        board[i] = []
-        for (j = 0; j < col; j++) {
-            board[i].push(Cell())
-        }
-    }
-
-    const getRow = () => row
-    const getCol = () => col
+const gameboard = (() => {
+    let board = ["", "", "", "", "", "", "", "", ""]
 
     const getBoard = () => board
 
-    const getBoardValueMap = () => {
-        const tiled = board.map(
-            (cellRow) => cellRow.map(
-                (cell) => (cell.getValue())
-            )
-        )
-        return tiled
+    const changeMark = (pos, mark) => {
+        board[pos] = mark
+    }
+    
+    const resetBoard = () =>  {
+        board = ["", "", "", "", "", "", "", "", ""]
     }
 
-    const changeTileValue = (cellRow, cellCol, tile) => {
-        board[cellRow][cellCol].changeValue(tile)
-    }
-
-    const printValueMap = () => {
-        console.log(getBoardValueMap())
-    }
-
-    const resetBoardValue = () => {
-        for (i = 0; i < row; i++) {
-            for (j = 0; j < col; j++) {
-                changeTileValue(i, j, 0)
-            }
-        }
-    }
-
-    return{
-        getRow,
-        getCol,
+    return {
         getBoard,
-        getBoardValueMap,
-        changeTileValue,
-        printValueMap,
-        resetBoardValue
+        changeMark,
+        resetBoard
     }
-}
+})()
 
-function Cell(){
-    let value = 0
-    const changeValue = (changed) => value = changed
-    const getValue = () => value
-    return{
-        getValue, 
-        changeValue
-    }
-}
-
-function UserInterface(gameboard){
+const DOM = (() => {
     const container = document.querySelector(".container")
-    const newgame = document.querySelector("#newgame")
-
-    const input1 = document.querySelector("#p1name")
-    const input2 = document.querySelector("#p2name")
-    const display1 = document.querySelector("#p1text")
-    const display2 = document.querySelector("#p2text")
+    const text1 = document.querySelector("#p1text")
+    const text2 = document.querySelector("#p2text")
+    const name1 = document.querySelector("#p1name")
+    const name2 = document.querySelector("#p2name")
     const score1 = document.querySelector("#p1score")
     const score2 = document.querySelector("#p2score")
     const bottomDisplay = document.querySelector("#display")
+    const newGame = document.querySelector("#newgame")
 
-    const updateDisplayText = (text) => bottomDisplay.textContent = text
-    const updateScoreText = (player, scoreNum) => {
-        if (player == 1) score1.textContent = `Score: ${scoreNum}`
-        else if (player == 2) score2.textContent = `Score: ${scoreNum}`
-    }
+    const getContainer = () => container
+    const getNewGame = () => newGame
+    const getText1 = () => text1
+    const getText2 = () => text2
+    const getName1 = () => name1
+    const getName2 = () => name2
 
-    const implementCells = () => {
-        for (i = 0; i < gameboard.getRow(); i++) {
-            for (j = 0; j < gameboard.getCol(); j++) {
-                let cell = document.createElement("div")
-                container.append(cell)
-                cell.classList.add("cell", `r${i}`, `c${j}`)
-            }
+    //adds 9 cells as children of container
+    const addCells = () => {
+        for (let i = 0; i < 9; i++) {
+            let cell = document.createElement("div")
+            cell.classList.add("cell")
+            cell.id = `${i}`
+            container.append(cell)
         }
     }
 
-    const fillTile = (getType) => {
-        return new Promise((resolve) => {
-            const handleClick = (e) => {
-                const cellRow = e.target.classList[1].substring(1, 2)
-                const cellCol = e.target.classList[2].substring(1, 2)
-
-                if (e.target.classList.contains("cell")) {
-                    if (e.target.textContent === "") {
-                        e.target.textContent = (getType == 1) ? "X" : "O"
-                        gameboard.changeTileValue(cellRow, cellCol, getType)
-                        container.removeEventListener("click", handleClick)
-                        resolve()
-                    } else {
-                        updateDisplayText("Choose Another Tile!")
-                    }
-                }
-
-            };
-
-            container.addEventListener("click", handleClick);
-        });
-    };
-
-    const eraseBoard = () => {
-        const cells = document.querySelectorAll(".cell")
-        cells.forEach((cell) => {
-            cell.textContent = ""
-        })
-        gameboard.resetBoardValue()
+    const changeName = (player, text) => {
+        (player == 0)
+            ? text1.textContent = text
+            : text2.textContent = text
     }
 
-    const startButton = () => {
-        return new Promise((resolve) => {
-            const handleClick = () => {
-                newgame.removeEventListener("click", handleClick)
-                resolve()
-                
-            }
-            newgame.addEventListener("click", handleClick)
-        })
+    const changeScore = (player, score) => {
+        (player == 0) 
+        ? score1.textContent = `Score: ${score}` 
+        : score2.textContent = `Score: ${score}`
     }
 
-    const changeNames = (player) => {
-        return new Promise((resolve) => {
-            if (player == 0) {
-                input1.addEventListener("keyup", () => {
-                    display1.textContent = input1.value
-                    resolve()
-                })
-            }
-            else if (player == 1) {
-                input2.addEventListener("keyup", () => {
-                    display2.textContent = input2.value
-                    resolve()
-                })
-            }
-        })
+    const changeBottomDisplay = (text) => {
+        bottomDisplay.textContent = text
     }
 
-    const getPlayerNames = (player) => {
-        if (player == 0) {
-            return display1.textContent
-        }
-        else if (player == 1) {
-            return display2.textContent
-        }
+    return {
+        getContainer,
+        getNewGame,
+        getText1,
+        getText2,
+        getName1,
+        getName2,
+        addCells,
+        changeName,
+        changeScore,
+        changeBottomDisplay
     }
+})()
 
-    return{
-        implementCells,
-        updateDisplayText,
-        updateScoreText,
-        fillTile,
-        eraseBoard,
-        startButton,
-        changeNames,
-        getPlayerNames
-    }
-}
-
-function controlGameFlow(){
+const controller = (() => {
     const player = [
-    {
-        name: "", 
-        value: 1,
-        score: 0
-    },
-    {
-        name: "",
-        value: 2,
-        score: 0
-    }]
-
-    const gameboard = Gameboard()
-    const user = UserInterface(gameboard)
+        {
+            name: "",
+            mark: "X",
+            score: 0
+        },
+        {
+            name: "",
+            mark: "O",
+            score: 0
+        }
+    ]
 
     let activePlayer = player[0]
-    const getActivePlayerValue = () => activePlayer.value
 
-    const switchTurns = () => {
-        activePlayer = (activePlayer == player[0]) ? player[1] : player[0]
+    const swapActivePlayer = () => {
+        activePlayer == player[0] ? activePlayer = player[1] : activePlayer = player[0]
     }
 
-    const detectWinner = () =>{
-        const flatCellValues = gameboard.getBoardValueMap().flat()
+    const addScore = (player) => {
+        player.score++
+    }
+
+    const decideWinner = () => {
+        //all possible combinations in array that lead to 3 in a row
         const winningCombo = [
             [0, 1, 2],
             [0, 3, 6],
@@ -205,67 +112,94 @@ function controlGameFlow(){
             [3, 4, 5],
             [6, 7, 8]
         ]
-        let threeinRow = []
-        for (i = 0; i < player.length; i++){
-            for (j = 0; j < winningCombo.length; j++) {
-                for (k = 0; k < winningCombo[j].length; k++) {
-                    threeinRow.push(flatCellValues[winningCombo[j][k]] == player[i].value)
-                }
-                if (!threeinRow.includes(false)) {
-                    return "Win"
-                }
-                threeinRow = []
+
+        //looks through each combo in the 3D array
+        for (j = 0; j < winningCombo.length; j++) {
+            let threeInRow = []
+            //looks through each index in each combo of the array
+            for (k = 0; k < winningCombo[j].length; k++) {
+                //adds false if board doesn't have same marks as active player in the given index of combo
+                threeInRow.push(gameboard.getBoard()[winningCombo[j][k]] == activePlayer.mark)
             }
-        }
-        if (flatCellValues.filter((value) => value == 0).length == 0){
-            return "Draw"
-        }
-        else{
-            return "N/A"
-        }
-    }
-    
-    async function playRound(){
-        while (true) {
-            user.updateDisplayText(`${activePlayer.name}'s Turn`)
-            await user.fillTile(getActivePlayerValue())
-            if (detectWinner() == "Win") {
-                activePlayer.score++
-                user.updateDisplayText(`${activePlayer.name} is the winner!`)
-                user.updateScoreText(activePlayer.value, activePlayer.score)
-                break
+            //if there is 3 in a row (no false in combo)
+            if (!threeInRow.includes(false)) {
+                return true
             }
-            else if (detectWinner() == "Draw") {
-                user.updateDisplayText("It's a Draw!")
-                break
+            //if all tiles are occupied and there isn't 3 in a row
+            else if (!gameboard.getBoard().includes("") && !threeInRow.includes(false)){
+                return false
             }
-            switchTurns()
         }
     }
 
-    async function runGame() {
-        user.implementCells()
-        await user.changeNames(0)
-        await user.changeNames(1)
-        await user.startButton()
-        player[0].name = user.getPlayerNames(0)
-        player[1].name = user.getPlayerNames(1)
+    const playGame = () => {
+        
+        DOM.addCells()
 
-        playRound()
-        if (!await user.startButton()) {
-            playRound()
-            gameboard.printValueMap()
+        //confirms names are added before new game can start
+        const confirmNames = () => {
+            DOM.getName1().addEventListener("keyup", (e) => {
+                DOM.changeName(0, DOM.getName1().value)
+                player[0].name = DOM.getText1().textContent
+                if (player[0].name !== "" && player[1].name !== "") {
+                    DOM.getNewGame().addEventListener("click", newGame)
+                }
+            })
+            DOM.getName2().addEventListener("keyup", (e) => {
+                DOM.changeName(1, DOM.getName2().value)
+                player[1].name = DOM.getText2().textContent
+                if (player[0].name !== "" && player[1].name !== "") {
+                    DOM.getNewGame().addEventListener("click", newGame)
+                }
+            })
+        }
+        
+        //resets marks, board state, activePlayer, bottom display respectively
+        const newGame = () => {
+            const list = DOM.getContainer().querySelectorAll(".cell")
+            list.forEach((cell) => {
+                cell.textContent = " "
+            })
+            gameboard.resetBoard()
             activePlayer = player[0]
+            DOM.changeBottomDisplay(`${activePlayer.name}'s Turn (${activePlayer.mark})`)
+            DOM.getContainer().addEventListener("click", playTurn)
         }
+
+        confirmNames()
+
+        //runs through an entire turn of the game
+        const playTurn = (e) => {
+            //only runs on empty (unoccupied) tile
+            if (gameboard.getBoard()[e.target.id] == "") {
+                gameboard.changeMark(e.target.id, activePlayer.mark)
+                e.target.textContent = activePlayer.mark
+                //if someone wins
+                if (decideWinner() == true) {
+                    DOM.getContainer().removeEventListener("click", playTurn)
+                    addScore(activePlayer)
+                    DOM.changeBottomDisplay(`${activePlayer.name} Wins! (${activePlayer.mark})`)
+                    DOM.changeScore(player.indexOf(activePlayer), activePlayer.score)
+                }
+                //if both players draw
+                else if (decideWinner() == false) {
+                    DOM.getContainer().removeEventListener("click", playTurn)
+                    addScore(activePlayer)
+                    DOM.changeBottomDisplay("Draw!")
+                }
+                //moves to next turn otherwise
+                else{
+                    swapActivePlayer()
+                    DOM.changeBottomDisplay(`${activePlayer.name}'s Turn (${activePlayer.mark})`)
+                }
+            }
+        }
+
     }
 
-    
-    runGame()
-    
     return{
-        switchTurns,
-        detectWinner,
+        playGame
     }
-}
+})()
 
-const play = controlGameFlow()
+controller.playGame()

@@ -1,12 +1,14 @@
 * {
     margin: 0;
-    font-family:'Times New Roman', Times, serif
+    font-family:'Times New Roman', Times, serif;
+    caret-color: transparent;
 }
 
 :root{
     --button-bg: blue;
     --pure-white: white;
     --input-color: gray;
+    --cursor-blink-color: black;
 }
 
 body{
@@ -46,7 +48,7 @@ button{
 
 .container{
     display: grid;
-    grid-template-columns: 100px 100px 100px;
+    grid-template-columns: 1fr 1fr 1fr;
 }
 
 .container div{
@@ -70,6 +72,8 @@ input{
     width: 15rem;
     height: 3rem;
     border-radius: 1rem;
+    padding-left: 0.5rem;
     font-size: 1.5rem;
     color: var(--input-color);
+    caret-color: var(--cursor-blink-color);
 }
